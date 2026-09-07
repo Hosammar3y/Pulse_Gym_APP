@@ -4,7 +4,7 @@ import 'package:pulse_coach_mobile/features/auth/domain/entities/auth_session.da
 
 void main() {
   test('login result maps trainer session', () {
-    final result = LoginResultModel(<String, dynamic>{
+    final result = const LoginResultModel(<String, dynamic>{
       'accessToken': 'token',
       'tokenType': 'Bearer',
       'expiresInSeconds': 3600,
@@ -12,14 +12,13 @@ void main() {
       'userId': 'u-1',
       'passwordChangeRequired': false,
     }).toDomain();
-
     expect(result.role, AuthRole.trainer);
     expect(result.session?.accessToken, 'token');
     expect(result.passwordChangeRequired, isFalse);
   });
 
   test('temporary password result may have no access token', () {
-    final result = LoginResultModel(<String, dynamic>{
+    final result = const LoginResultModel(<String, dynamic>{
       'role': 'TRAINER',
       'userId': 'u-1',
       'expiresInSeconds': 0,

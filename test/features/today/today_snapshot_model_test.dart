@@ -3,7 +3,7 @@ import 'package:pulse_coach_mobile/features/today/data/models/today_snapshot_mod
 
 void main() {
   test('today snapshot counts client states and queues', () {
-    final snapshot = TodaySnapshotModel(
+    final snapshot = const TodaySnapshotModel(
       profile: <String, dynamic>{'displayName': 'Coach Omar'},
       clients: <dynamic>[
         <String, dynamic>{'id': '1', 'firstName': 'A', 'lastName': 'One', 'goal': 'Fat loss', 'status': 'ACTIVE'},
@@ -13,7 +13,6 @@ void main() {
       reviews: <dynamic>[<String, dynamic>{'id': 'r'}],
       renewals: <dynamic>[<String, dynamic>{'id': 'n1'}, <String, dynamic>{'id': 'n2'}],
     ).toDomain();
-
     expect(snapshot.trainerName, 'Coach Omar');
     expect(snapshot.activeClients, 1);
     expect(snapshot.pausedClients, 1);

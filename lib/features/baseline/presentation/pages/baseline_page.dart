@@ -16,10 +16,7 @@ class BaselinePage extends ConsumerWidget {
       appBar: AppBar(title: const Text('Starting Baseline')),
       body: value.when(
         loading: () => const AppLoading(),
-        error: (error, _) => AppErrorState(
-          message: error.toString(),
-          onRetry: () => ref.invalidate(startingBaselineProvider(clientId)),
-        ),
+        error: (error, _) => AppErrorState(message: error.toString(), onRetry: () => ref.invalidate(startingBaselineProvider(clientId))),
         data: (baseline) => ListView(
           padding: const EdgeInsets.all(16),
           children: <Widget>[
@@ -49,33 +46,23 @@ class BaselinePage extends ConsumerWidget {
                 return Container(
                   width: 100,
                   height: 120,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(exists ? Icons.check_circle : Icons.image_not_supported_outlined),
-                      const SizedBox(height: 8),
-                      Text(angle),
-                    ],
-                  ),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(16), color: Theme.of(context).colorScheme.surfaceContainerHighest),
+                  child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[Icon(exists ? Icons.check_circle : Icons.image_not_supported_outlined), const SizedBox(height: 8), Text(angle)]),
                 );
               }).toList(growable: false),
             ),
             const SizedBox(height: 20),
-            const Card(
+            Card(
               child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text('Trainer-entered baseline', style: TextStyle(fontWeight: FontWeight.w800)),
-                    SizedBox(height: 6),
-                    Text('Designed for mobile, but intentionally not wired because the production backend currently exposes trainer read access only. No fake local completion is allowed.'),
-                    SizedBox(height: 12),
-                    FilledButton.icon(onPressed: null, icon: Icon(Icons.add_a_photo_outlined), label: Text('Complete baseline for client')),
+                    const Text('Trainer-entered baseline', style: TextStyle(fontWeight: FontWeight.w800)),
+                    const SizedBox(height: 6),
+                    const Text('Designed for mobile, but intentionally not wired because the production backend currently exposes trainer read access only. No fake local completion is allowed.'),
+                    const SizedBox(height: 12),
+                    FilledButton.icon(onPressed: null, icon: const Icon(Icons.add_a_photo_outlined), label: const Text('Complete baseline for client')),
                   ],
                 ),
               ),

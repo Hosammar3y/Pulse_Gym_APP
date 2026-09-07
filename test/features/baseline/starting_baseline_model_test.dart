@@ -4,7 +4,7 @@ import 'package:pulse_coach_mobile/features/baseline/domain/entities/starting_ba
 
 void main() {
   test('baseline maps all required angles', () {
-    final baseline = StartingBaselineModel(<String, dynamic>{
+    final baseline = const StartingBaselineModel(<String, dynamic>{
       'requirement': 'REQUIRED',
       'status': 'COMPLETED',
       'baselineId': 'b1',
@@ -16,7 +16,6 @@ void main() {
         <String, dynamic>{'id': 'b', 'angle': 'BACK', 'uploadConfirmed': true},
       ],
     }).toEntity();
-
     expect(baseline.photos.map((photo) => photo.angle).toSet(), <BaselineAngle>{BaselineAngle.front, BaselineAngle.side, BaselineAngle.back});
     expect(baseline.startingWeightKg, 91.5);
   });
