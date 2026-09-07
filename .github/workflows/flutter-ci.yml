@@ -26,5 +26,8 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
-      - name: Test
-        run: flutter test
+      - name: Unit and widget tests
+        run: flutter test test
+
+      - name: Integration tests
+        run: flutter test integration_test

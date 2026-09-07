@@ -18,21 +18,26 @@ class SseClient implements RealtimeClient {
     _cancelToken = CancelToken();
     final response = await _apiClient.raw.get<ResponseBody>(
       path,
-      options: Options(responseType: ResponseType.stream, headers: const {'Accept': 'text/event-stream'}),
+      options: Options(
+        responseType: ResponseType.stream,
+        headers: const <String, String>{'Accept': 'text/event-stream'},
+      ),
       cancelToken: _cancelToken,
     );
 
     final body = response.data;
     if (body == null) return;
 
-    final lines = body.stream.transform(utf8.decoder).transform(const LineSplitter());
+    final decoded = utf8.decoder.bind(body.stream);
+    final lines = decoded.transform(const LineSplitter());
     String? event;
     final data = StringBuffer();
 
     await for (final line in lines) {
       if (line.isEmpty) {
-        if (event != null && data.isNotEmpty) {
-          yield RealtimeEvent(event: event!, data: data.toString());
+        final eventName = event;
+        if (eventName != null && data.isNotEmpty) {
+          yield RealtimeEvent(event: eventName, data: data.toString());
         }
         event = null;
         data.clear();
