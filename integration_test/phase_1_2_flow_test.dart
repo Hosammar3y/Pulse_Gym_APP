@@ -15,23 +15,44 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('phase 1 Today renders authoritative workbench snapshot', (tester) async {
-    await tester.pumpWidget(ProviderScope(
-      overrides: <Override>[todayRepositoryProvider.overrideWithValue(_FakeTodayRepository())],
-      child: const MaterialApp(home: TodayPage()),
-    ));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          todayRepositoryProvider.overrideWithValue(_FakeTodayRepository()),
+        ],
+        child: const MaterialApp(home: TodayPage()),
+      ),
+    );
     await tester.pumpAndSettle();
+
+    // Initial viewport assertions.
     expect(find.text('Welcome, Coach Omar'), findsOneWidget);
     expect(find.text('Active Clients'), findsOneWidget);
+
+    // TodayPage uses a lazy ListView, so lower sections may not be built until
+    // they are scrolled into view on the Linux integration-test viewport.
+    await tester.scrollUntilVisible(
+      find.text('Recent Clients'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
     expect(find.text('Recent Clients'), findsOneWidget);
     expect(find.text('Ahmed Hassan'), findsOneWidget);
   });
 
   testWidgets('phase 2 client directory renders server-owned client data', (tester) async {
-    await tester.pumpWidget(ProviderScope(
-      overrides: <Override>[clientsRepositoryProvider.overrideWithValue(_FakeClientsRepository())],
-      child: const MaterialApp(home: ClientsPage()),
-    ));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          clientsRepositoryProvider.overrideWithValue(_FakeClientsRepository()),
+        ],
+        child: const MaterialApp(home: ClientsPage()),
+      ),
+    );
     await tester.pumpAndSettle();
+
     expect(find.text('Ahmed Hassan'), findsOneWidget);
     expect(find.textContaining('Fat loss'), findsOneWidget);
   });
@@ -46,7 +67,14 @@ class _FakeTodayRepository implements TodayRepository {
         expiredClients: 0,
         reviewsWaiting: 1,
         renewalsWaiting: 0,
-        recentClients: <TodayClient>[TodayClient(id: 't1', name: 'Ahmed Hassan', goal: 'Fat loss', status: 'ACTIVE')],
+        recentClients: <TodayClient>[
+          TodayClient(
+            id: 't1',
+            name: 'Ahmed Hassan',
+            goal: 'Fat loss',
+            status: 'ACTIVE',
+          ),
+        ],
       );
 }
 
@@ -63,9 +91,19 @@ class _FakeClientsRepository implements ClientsRepository {
     subscriptionStatus: 'ACTIVE',
   );
 
-  @override Future<List<Client>> list({String query = '', String status = 'ALL'}) async => <Client>[client];
-  @override Future<Client> get(String id) async => client;
-  @override Future<Client> create(CreateClientInput input) async => client;
-  @override Future<Client> pause(String id, {DateTime? pauseUntil}) async => client;
-  @override Future<Client> resume(String id) async => client;
+  @override
+  Future<List<Client>> list({String query = '', String status = 'ALL'}) async =>
+      <Client>[client];
+
+  @override
+  Future<Client> get(String id) async => client;
+
+  @override
+  Future<Client> create(CreateClientInput input) async => client;
+
+  @override
+  Future<Client> pause(String id, {DateTime? pauseUntil}) async => client;
+
+  @override
+  Future<Client> resume(String id) async => client;
 }
