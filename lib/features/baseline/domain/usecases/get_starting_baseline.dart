@@ -1,0 +1,1 @@
+import '../entities/starting_baseline.dart'; import '../repositories/baseline_repository.dart'; class GetStartingBaseline { const GetStartingBaseline(this._repository); final BaselineRepository _repository; Future<StartingBaseline> call(String traineeId)=>_repository.getForTrainer(traineeId); }

@@ -1,0 +1,3 @@
+enum BaselineAngle { front, side, back }
+class StartingBaselinePhoto { const StartingBaselinePhoto({required this.id,required this.angle,required this.uploadConfirmed}); final String id; final BaselineAngle angle; final bool uploadConfirmed; }
+class StartingBaseline { const StartingBaseline({required this.requirement,required this.status,required this.photos,this.baselineId,this.startingWeightKg,this.completedAt}); final String requirement; final String status; final String? baselineId; final double? startingWeightKg; final DateTime? completedAt; final List<StartingBaselinePhoto> photos; bool get completed=>status=='COMPLETED'; }
