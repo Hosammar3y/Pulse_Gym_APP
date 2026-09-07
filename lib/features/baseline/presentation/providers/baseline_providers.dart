@@ -1,0 +1,3 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart'; import '../../../../core/network/api_client.dart'; import '../../data/datasources/baseline_remote_data_source.dart'; import '../../data/repositories/baseline_repository_impl.dart'; import '../../domain/entities/starting_baseline.dart'; import '../../domain/repositories/baseline_repository.dart'; import '../../domain/usecases/get_starting_baseline.dart';
+final baselineRepositoryProvider=Provider<BaselineRepository>((ref)=>BaselineRepositoryImpl(BaselineRemoteDataSource(ref.watch(apiClientProvider))));
+final startingBaselineProvider=FutureProvider.autoDispose.family<StartingBaseline,String>((ref,id)=>GetStartingBaseline(ref.watch(baselineRepositoryProvider))(id));
