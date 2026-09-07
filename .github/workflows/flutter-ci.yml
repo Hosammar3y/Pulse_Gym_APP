@@ -29,5 +29,8 @@ jobs:
       - name: Unit and widget tests
         run: flutter test test
 
+      - name: Generate temporary Linux integration host
+        run: flutter create --platforms=linux --project-name pulse_coach_mobile .
+
       - name: Integration tests
-        run: flutter test integration_test
+        run: flutter test integration_test -d linux
