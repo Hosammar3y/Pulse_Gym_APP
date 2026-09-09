@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/presentation/pages/change_temporary_password_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/baseline/presentation/pages/baseline_page.dart';
@@ -18,18 +19,26 @@ import 'route_names.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final auth = ref.watch(authControllerProvider);
+  final challenge = ref.watch(temporaryPasswordChallengeProvider);
   return GoRouter(
     initialLocation: '/login',
     redirect: (context, state) {
       if (auth.isLoading) return null;
       final signedIn = auth.valueOrNull != null;
       final atLogin = state.matchedLocation == '/login';
+      final atTemporaryChange = state.matchedLocation == '/change-temporary-password';
+
+      if (challenge != null) {
+        return atTemporaryChange ? null : '/change-temporary-password';
+      }
+      if (atTemporaryChange) return '/login';
       if (!signedIn && !atLogin) return '/login';
       if (signedIn && atLogin) return '/today';
       return null;
     },
     routes: <RouteBase>[
       GoRoute(path: '/login', name: RouteNames.login, builder: (context, state) => const LoginPage()),
+      GoRoute(path: '/change-temporary-password', builder: (context, state) => const ChangeTemporaryPasswordPage()),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) => AppShell(navigationShell: navigationShell),
         branches: <StatefulShellBranch>[
