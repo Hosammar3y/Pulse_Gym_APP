@@ -18,6 +18,15 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<AuthSession> completeTemporaryPassword(String token, String password) async {
+    final session = AuthSessionModel(await _remote.completeTemporaryPassword(token, password)).toDomain();
+    // Product UX intentionally returns to Login after replacing a temporary password.
+    // Do not persist the returned session; the Coach signs in again with the new password.
+    await _storage.clearAccessToken();
+    return session;
+  }
+
+  @override
   Future<AuthSession> refresh() async {
     final session = AuthSessionModel(await _remote.refresh()).toDomain();
     await _storage.writeAccessToken(session.accessToken);
