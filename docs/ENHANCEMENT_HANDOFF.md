@@ -55,6 +55,22 @@ Security rules:
 - existing access/refresh tokens remain in the established secure-storage mechanism;
 - a temporary-password challenge must block navigation into the normal Trainer shell until completed.
 
+### Temporary-password logout — added 2026-09-10
+
+The forced Change Temporary Password screen now has an explicit **Log out** action.
+
+Required behavior:
+- available while the user is on the temporary-password challenge screen;
+- applicable regardless of whether the challenge was produced by a Trainer or Trainee login;
+- abandon/clear the transient `passwordChangeToken` challenge state;
+- clear local access-token/session state through the normal logout path;
+- return to `/login` even if the remote logout request cannot complete;
+- clear any password text currently typed in the form;
+- retain the remembered normalized email convenience;
+- never persist the temporary/new password or challenge token.
+
+Important distinction: the temporary-password screen is role-neutral, but the current `Pulse_Gym_APP` application shell is still Trainer-first. Adding Log out here does **not** mean the full Trainee mobile application is implemented.
+
 ## Block 2 — exact Trainer Starting Baseline contract
 
 Do not guess response field names.
@@ -186,7 +202,7 @@ Trainer program/progress readiness:
 - pageable Cardio evidence once source backend enhancement is available;
 - responsive regression.
 
-## New source-side enhancements mobile will consume later
+## Source-side future enhancements mobile will consume later
 
 Source repository:
 
@@ -196,7 +212,7 @@ Branch:
 
 `feat/future-enhancements-bundle`
 
-That unverified source branch contains:
+The source branch contains backend/Trainer Web work for:
 
 1. Trainer-created Starting Baseline for existing ACTIVE Trainee.
 2. Coach feedback note after REVIEWED Check-in, readable by Trainee.
@@ -206,7 +222,7 @@ That unverified source branch contains:
 6. Trainer Web remembered login email after temporary-password completion.
 7. Starting Baseline responsive zoomable photo preview polish.
 
-Treat those as future/development contracts until source verification, merge and deployment happen.
+Do not interpret those source contracts as completed mobile screens. Blocks 2–5 in this mobile repository remain incomplete unless later commits explicitly implement them.
 
 ## Required tests when tooling is available
 
@@ -227,7 +243,11 @@ Block 1 focused validation must cover:
 - successful change returns to Login;
 - previous email is prefilled;
 - password is blank;
-- only email is persisted.
+- only email is persisted;
+- Log out is visible on the forced-change page;
+- Log out clears the transient challenge/local session and returns to Login;
+- Log out still returns to Login if the remote logout request fails;
+- typed password text is discarded and never persisted.
 
 Block 2 must cover exact upload-intent parsing, all dynamic required headers, direct PUT failure preventing confirm, successful PUT followed by confirm, secure preview, remove, completion gating, completed read-only behavior and non-ACTIVE blocking.
 
@@ -268,7 +288,8 @@ git bundle create pulse-mobile-enhancements.bundle feat/mobile-enhancements-bund
 
 ## Current status
 
-- Block 1 code exists on the working branch.
+- Block 1 code exists on the working branch, including remembered email and the new temporary-password Log out action.
 - Blocks 2–5 are not complete unless later commits explicitly add them.
-- CI is not considered executed when no runner is allocated.
+- Full Trainee mobile application/role is not implemented.
+- Flutter validation is still required; do not claim this branch green without an executed runner/local Flutter verification.
 - No merge or deployment is authorized by this handoff.
