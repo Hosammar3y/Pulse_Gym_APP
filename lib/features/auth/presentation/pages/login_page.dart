@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/storage/login_preferences.dart';
 import '../providers/auth_providers.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -15,6 +16,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _email = TextEditingController();
   final _password = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _email.text = ref.read(loginPreferencesProvider).readLastLoginEmail() ?? '';
+  }
 
   @override
   void dispose() {
@@ -48,6 +55,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       key: const Key('login_email'),
                       controller: _email,
                       keyboardType: TextInputType.emailAddress,
+                      autofillHints: const <String>[AutofillHints.username, AutofillHints.email],
                       decoration: const InputDecoration(labelText: 'Email'),
                       validator: (value) => value == null || value.trim().isEmpty ? 'Email is required' : null,
                     ),
@@ -56,6 +64,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       key: const Key('login_password'),
                       controller: _password,
                       obscureText: true,
+                      autofillHints: const <String>[AutofillHints.password],
                       decoration: const InputDecoration(labelText: 'Password'),
                       validator: (value) => value == null || value.isEmpty ? 'Password is required' : null,
                     ),
@@ -67,7 +76,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                     if (auth.hasError) Padding(
                       padding: const EdgeInsets.only(top: 12),
-                      child: Text(auth.error.toString(), style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                      child: Text('Sign in failed. Check your credentials and try again.', style: TextStyle(color: Theme.of(context).colorScheme.error)),
                     ),
                   ],
                 ),
@@ -83,8 +92,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     final result = await ref.read(authControllerProvider.notifier).login(_email.text.trim(), _password.text);
     if (!mounted || result == null) return;
+    _password.clear();
     if (result.passwordChangeRequired) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Temporary password change is required before mobile access.')));
+      context.go('/change-temporary-password');
       return;
     }
     context.go('/today');
