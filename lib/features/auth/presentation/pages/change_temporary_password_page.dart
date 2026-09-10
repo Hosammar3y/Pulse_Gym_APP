@@ -105,6 +105,13 @@ class _ChangeTemporaryPasswordPageState extends ConsumerState<ChangeTemporaryPas
                       onPressed: auth.isLoading || challenge == null ? null : () => _submit(challenge),
                       child: Text(auth.isLoading ? 'Saving…' : 'Change password'),
                     ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      key: const Key('temporary_password_logout'),
+                      onPressed: auth.isLoading ? null : _logout,
+                      icon: const Icon(Icons.logout),
+                      label: const Text('Log out'),
+                    ),
                   ],
                 ),
               ),
@@ -124,5 +131,17 @@ class _ChangeTemporaryPasswordPageState extends ConsumerState<ChangeTemporaryPas
     _password.clear();
     _confirm.clear();
     context.go('/login');
+  }
+
+  Future<void> _logout() async {
+    try {
+      await ref.read(authControllerProvider.notifier).logout();
+    } catch (_) {
+      // The controller still clears local auth/challenge state in its finally block.
+    } finally {
+      _password.clear();
+      _confirm.clear();
+      if (mounted) context.go('/login');
+    }
   }
 }
